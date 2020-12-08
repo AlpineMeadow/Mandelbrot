@@ -2,6 +2,48 @@
 
 #A program to create the Mandelbrot set.
 
+
+
+def getArgs(parser) :
+ 
+  #Get the parameters
+  parser.add_argument('-sX', '--StartX', default = -0.205,
+                      help = 'Choose the Starting X coordinate', type = float) 
+
+  parser.add_argument('-sY', '--StartY', default = 1.065,
+                      help = 'Choose the Starting Y coordinate', type = float)
+  
+  parser.add_argument('-eX', '--EndX', default = -0.175,
+                      help = 'Choose the Ending X coordinate', type = float)
+  
+  parser.add_argument('-eY', '--EndY', default = 1.085,
+                      help = 'Choose the Ending Y coordinate', type = float) 
+  
+  parser.add_argument('-nI', '--numIterations', default = 50,
+                      help = 'Choose how many iterations are made before stopping.', type = int)
+
+  numGridPointsStr1 = ('Choose the number of grid points. ')
+  numGridPointsStr2 = ('This value will give numGridPoints Squared points.')
+  numGridPointsStr = numGridPoints1 + numGridPoints2
+  
+  parser.add_argument('-nG', '--numGridPoints', default = 100, help = numGridPointsStr,
+                      type = int)
+
+  args = parser.parse_args()
+
+  #Generate variables from the inputs.
+  numIterations = args.numIterations
+  numGridPoints = args.numGridPoints
+
+  xyLocations = [startX, startY, endX, endY]
+  
+  return numGridPoints, numIterations, xyLocations
+#End of the function getArgs(parser).py
+
+#################################################################################
+
+#################################################################################
+
 def plotMandelbrot(MSet, numIterations, outfile) :
   import numpy as np
   import matplotlib.pyplot as plt
@@ -36,7 +78,6 @@ def plotMandelbrot(MSet, numIterations, outfile) :
   yRes = str(int(sqrt(len(y))))  
   titleStr = 'Mandelbrot Set - Resolution : ' + xRes + 'x' + yRes
 
-
   #Plot the set.
   plt.figure(figsize = (20, 20))
   plt.rcParams.update({'font.size': 24})
@@ -53,11 +94,12 @@ def plotMandelbrot(MSet, numIterations, outfile) :
   plt.cla()
   plt.clf()
 #End of the function plotMandelbrot.py
-######################################################################################
 
 ######################################################################################
 
-def getMandelbrotSet(startPoint, numGridPoints, numIterations, startX, endX, startY, endY) :
+######################################################################################
+
+def getMandelbrotSet(startPoint, numGridPoints, numIterations, xyLocations) :
   import numpy as np
   
   #Allocate an array that will hold the Mandelbrot set.  First column will hold the x component
@@ -67,8 +109,8 @@ def getMandelbrotSet(startPoint, numGridPoints, numIterations, startX, endX, sta
   MSet = np.zeros((numGridPoints*numGridPoints, 4))
 
   #Create a set of coordinates
-  x = np.linspace(startX, endX, numGridPoints)
-  y = np.linspace(startY, endY, numGridPoints)
+  x = np.linspace(xyLocations[0], xyLocations[2], numGridPoints)
+  y = np.linspace(xyLocations[1], xyLocaitons[3], numGridPoints)
 
   #Loop through the gridpoints.  These are the c's in the original formula.
   for i in range(numGridPoints) :
@@ -100,6 +142,7 @@ def getMandelbrotSet(startPoint, numGridPoints, numIterations, startX, endX, sta
 
   return MSet
 #End of the function getMandelbrotSet.py
+
 #####################################################################################
 
 #####################################################################################
@@ -108,20 +151,21 @@ def getMandelbrotSet(startPoint, numGridPoints, numIterations, startX, endX, sta
 def main() :
   from math import sqrt
   import numpy as np
-
+  import argparse
+  
   #Set up the original starting point.
   z0 = 0 + 0j
 
-  startX = -0.205
-  endX = -0.175
-  startY = 1.065
-  endY = 1.085
+  #Set up the argument parser.
+  parser = argparse.ArgumentParser()
 
+  #Set up the location of domain to be investigated.
   #Set up the number of iterations to be done on the point.
-  numIterations = 50
+  #Create a number of points.  This will give numGridPoints^2 of values to be plotted.  
+  numGridPoints, numIterations, xyLocations = getArgs(parser)
   
-  #Create a number of points.  This will give numGridPoints^2 of values to be plotted.
-  numGridPoints = 500
+  #Get the Mandelbrot set.
+  MSet = getMandelbrotSet(z0, numGridPoints, numIterations, xyLocations)
   
   #Create a output file name to where the plot will be saved.
   outfilepath = '/home/jdw/Computer/Mandelbrot/Plots/'
@@ -129,12 +173,8 @@ def main() :
               str(endY) + str(numIterations) + '.pdf')
   outfile = outfilepath + filename     
 
-  #Get the Mandelbrot set.
-  MSet = getMandelbrotSet(z0, numGridPoints, numIterations, startX, endX, startY, endY)
-
   #Now plot the results.
   plotMandelbrot(MSet, numIterations, outfile)
-
 
 # Standard boilerplate to call the main() function to begin
 # the program.
