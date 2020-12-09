@@ -64,17 +64,13 @@ def plotMandelbrot(MSet, numIterations, xyLocations, outfile) :
   #include the values found in inSet.  inSet contains only zeros and ones so the last level
   #must be larger than 1.0 or else this doesn't work.
   inSetLevels = [0.0, 0.25, 1.5]
-  inSetColors = ['white', 'black']
+  inSetColors = ['gold', 'black']
   inSetcmap, inSetnorm = mpl.colors.from_levels_and_colors(inSetLevels, inSetColors)
 
   #Generate a color map that plots the degree to which the points leave the Mandelbrot set.
   notInSetLevels = list(np.arange(1.01, numIterations + 0.01, 10))
-  notInSetColors = ['navy', 'blue', 'plum', 'indigo']
+  notInSetColors = ['midnightblue', 'royalblue', 'cornflowerblue', 'lightsteelblue']
   notInSetcmap, notInSetnorm = mpl.colors.from_levels_and_colors(notInSetLevels, notInSetColors)
-
-  #The plot appears to be shifted downward.  Lets look at the y-coordinate that is being
-  #plotted. 
-  index = np.where(inSet == 1.0)
 
   #Generate a title string.
   xRes = str(int(sqrt(len(x))))
