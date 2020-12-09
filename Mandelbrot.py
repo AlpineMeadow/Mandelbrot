@@ -24,7 +24,7 @@ def getArgs(parser) :
 
   numGridPointsStr1 = ('Choose the number of grid points. ')
   numGridPointsStr2 = ('This value will give numGridPoints Squared points.')
-  numGridPointsStr = numGridPoints1 + numGridPoints2
+  numGridPointsStr = numGridPointsStr1 + numGridPointsStr2
   
   parser.add_argument('-nG', '--numGridPoints', default = 100, help = numGridPointsStr,
                       type = int)
@@ -34,7 +34,10 @@ def getArgs(parser) :
   #Generate variables from the inputs.
   numIterations = args.numIterations
   numGridPoints = args.numGridPoints
-
+  startX = args.StartX
+  startY = args.StartY
+  endX = args.EndX
+  endY = args.EndY
   xyLocations = [startX, startY, endX, endY]
   
   return numGridPoints, numIterations, xyLocations
@@ -44,7 +47,7 @@ def getArgs(parser) :
 
 #################################################################################
 
-def plotMandelbrot(MSet, numIterations, outfile) :
+def plotMandelbrot(MSet, numIterations, xyLocations, outfile) :
   import numpy as np
   import matplotlib.pyplot as plt
   from matplotlib.backends.backend_pdf import PdfPages
@@ -79,11 +82,26 @@ def plotMandelbrot(MSet, numIterations, outfile) :
   titleStr = 'Mandelbrot Set - Resolution : ' + xRes + 'x' + yRes
 
   #Plot the set.
-  plt.figure(figsize = (20, 20))
+  xMin = xyLocations[0]
+  xMax = xyLocations[2]
+  yMin = xyLocations[1]
+  yMax = xyLocations[3]
+  deltaX = np.abs(xMin - xMax)
+  deltaY = np.abs(yMin - yMax)
+
+  #We keep the aspect ratio of the plot the same as the domain.
+  figsizeX = 20
+  figsizeY = 20*deltaY/deltaX
+  plt.figure(figsize = (figsizeX, figsizeY))
   plt.rcParams.update({'font.size': 24})
   ax = plt.axes()
+
+  ax.set_xlim([xMin, xMax])
+  ax.set_ylim([yMin, yMax])
   ax.scatter(x, y, marker = '.', c = inSet, cmap = inSetcmap, norm = inSetnorm)
-  ax.scatter(x, y, marker = '.', c = notInSet, cmap = notInSetcmap, norm = notInSetnorm)  
+  ax.scatter(x, y, marker = '.', c = notInSet, cmap = notInSetcmap, norm = notInSetnorm)
+  plt.plot([-2.0, 2.0], [0.0, 0.0], color = 'black')
+  plt.plot([0.0, 0.0], [-2.0, 2.0], color = 'black')
   plt.title(titleStr)
   
   #Save the plot to a file.
@@ -110,7 +128,7 @@ def getMandelbrotSet(startPoint, numGridPoints, numIterations, xyLocations) :
 
   #Create a set of coordinates
   x = np.linspace(xyLocations[0], xyLocations[2], numGridPoints)
-  y = np.linspace(xyLocations[1], xyLocaitons[3], numGridPoints)
+  y = np.linspace(xyLocations[1], xyLocations[3], numGridPoints)
 
   #Loop through the gridpoints.  These are the c's in the original formula.
   for i in range(numGridPoints) :
@@ -149,8 +167,6 @@ def getMandelbrotSet(startPoint, numGridPoints, numIterations, xyLocations) :
 
 #Gather our code in a main() function.
 def main() :
-  from math import sqrt
-  import numpy as np
   import argparse
   
   #Set up the original starting point.
@@ -169,12 +185,13 @@ def main() :
   
   #Create a output file name to where the plot will be saved.
   outfilepath = '/home/jdw/Computer/Mandelbrot/Plots/'
-  filename = ('Mandelbrot' + str(startX) + str(endX) + str(startY) +
-              str(endY) + str(numIterations) + '.pdf')
+  filename = ('Mandelbrot_' + str(xyLocations[0]) + '_' + str(xyLocations[2]) + '_' +
+              str(xyLocations[1]) + '_' + str(xyLocations[3]) + '_' +
+              str(numIterations) + '.pdf')
   outfile = outfilepath + filename     
 
   #Now plot the results.
-  plotMandelbrot(MSet, numIterations, outfile)
+  plotMandelbrot(MSet, numIterations, xyLocations, outfile)
 
 # Standard boilerplate to call the main() function to begin
 # the program.
