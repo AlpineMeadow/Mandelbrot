@@ -103,11 +103,12 @@ def plotMandelbrot(MSet, numIterations, xyLocations, outfile) :
   plt.plot([-2.0, 2.0], [0.0, 0.0], color = 'black')
   plt.plot([0.0, 0.0], [-2.0, 2.0], color = 'black')
   plt.title(titleStr)
-  
+
+  plt.savefig(outfile)
   #Save the plot to a file.
-  pp = PdfPages(outfile)
-  pp.savefig()
-  pp.close()
+#  pp = PdfPages(outfile)
+#  pp.savefig()
+#  pp.close()
 
   plt.cla()
   plt.clf()
