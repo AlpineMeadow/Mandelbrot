@@ -182,9 +182,13 @@ def main() :
   
   #Create a output file name to where the plot will be saved.
   outfilepath = '/home/jdw/Computer/Mandelbrot/Plots/'
+#  filename = ('Mandelbrot_' + str(xyLocations[0]) + '_' + str(xyLocations[2]) + '_' +
+#              str(xyLocations[1]) + '_' + str(xyLocations[3]) + '_' +
+#              str(numIterations) + '.pdf')
   filename = ('Mandelbrot_' + str(xyLocations[0]) + '_' + str(xyLocations[2]) + '_' +
               str(xyLocations[1]) + '_' + str(xyLocations[3]) + '_' +
-              str(numIterations) + '.pdf')
+              str(numIterations) + '.jpg')
+
   outfile = outfilepath + filename     
 
   #Now plot the results.
