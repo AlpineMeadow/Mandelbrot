@@ -88,6 +88,7 @@ def plotMandelbrot(MSet, numIterations, xyLocations, outfile) :
   #We keep the aspect ratio of the plot the same as the domain.
   figsizeX = 20
   figsizeY = 20*deltaY/deltaX
+
   plt.figure(figsize = (figsizeX, figsizeY))
   plt.rcParams.update({'font.size': 24})
   ax = plt.axes()
@@ -106,6 +107,7 @@ def plotMandelbrot(MSet, numIterations, xyLocations, outfile) :
 #  pp.savefig()
 #  pp.close()
 
+  plt.close()
   plt.cla()
   plt.clf()
 #End of the function plotMandelbrot.py
@@ -164,36 +166,53 @@ def getMandelbrotSet(startPoint, numGridPoints, numIterations, xyLocations) :
 
 #Gather our code in a main() function.
 def main() :
-  import argparse
+  import numpy as np
   
   #Set up the original starting point.
   z0 = 0 + 0j
 
-  #Set up the argument parser.
-  parser = argparse.ArgumentParser()
+  numGridPoints = 1000
+  numIterations = 50
 
-  #Set up the location of domain to be investigated.
-  #Set up the number of iterations to be done on the point.
-  #Create a number of points.  This will give numGridPoints^2 of values to be plotted.  
-  numGridPoints, numIterations, xyLocations = getArgs(parser)
+  #Generate x and y coordinates with domain of -2.0 to 2.0 divided by a given number.
+  startX = -2.0
+  endX = 2.0
+  startY = -2.0
+  endY = 2.0
   
-  #Get the Mandelbrot set.
-  MSet = getMandelbrotSet(z0, numGridPoints, numIterations, xyLocations)
+  numCoordinates = 50
+  XCoords = np.linspace(startX, endX, numCoordinates)
+  YCoords = np.linspace(startY, endY, numCoordinates)
+  xLength = np.linalg.norm(endX - startX)/numCoordinates
+  yLength = np.linalg.norm(endY - startY)/numCoordinates
+
+  #Loop through the coordinates.
+  for i in range(len(XCoords)) :
+    for j in range(len(YCoords)) :
+
+      #Set the x,y locations.
+      xyLocations = [XCoords[i], YCoords[j], XCoords[i] + xLength, YCoords[j] + yLength]
+      
+      #Get the Mandelbrot set.
+      MSet = getMandelbrotSet(z0, numGridPoints, numIterations, xyLocations)
   
-  #Create a output file name to where the plot will be saved.
-  outfilepath = '/home/jdw/Computer/Mandelbrot/Plots/'
-#  filename = ('Mandelbrot_' + str(xyLocations[0]) + '_' + str(xyLocations[2]) + '_' +
-#              str(xyLocations[1]) + '_' + str(xyLocations[3]) + '_' +
-#              str(numIterations) + '.pdf')
-  filename = ('Mandelbrot_' + str(xyLocations[0]) + '_' + str(xyLocations[2]) + '_' +
-              str(xyLocations[1]) + '_' + str(xyLocations[3]) + '_' +
-              str(numIterations) + '.jpg')
+      #Create a output file name to where the plot will be saved.
+      outfilepath = '/home/jdw/Computer/Mandelbrot/Plots/'
 
-  outfile = outfilepath + filename     
+      startXStr = ('{:-.3f}'.format(XCoords[i]))
+      startYStr = ('{:-.3f}'.format(YCoords[j]))
+      endXStr = ('{:-.3f}'.format(XCoords[i] + xLength))
+      endYStr = ('{:-.3f}'.format(YCoords[j] + yLength))
+      
+      filename = ('Mandelbrot_' + startXStr + '_' + endXStr + '_' + startYStr + '_' +
+                  endYStr + '_' + str(numIterations) + '.jpg')
+      outfile = outfilepath + filename     
 
-  #Now plot the results.
-  plotMandelbrot(MSet, numIterations, xyLocations, outfile)
-
+      #Now plot the results.
+      plotMandelbrot(MSet, numIterations, xyLocations, outfile)
+    #End of for loop - for j in range(len(YCoords)) :
+  #End of for loop - for i in range(len(XCoords)) :
+  
 # Standard boilerplate to call the main() function to begin
 # the program.
 if __name__ == '__main__':
