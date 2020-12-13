@@ -167,6 +167,7 @@ def getMandelbrotSet(startPoint, numGridPoints, numIterations, xyLocations) :
 #Gather our code in a main() function.
 def main() :
   import numpy as np
+  import gc
   
   #Set up the original starting point.
   z0 = 0 + 0j
@@ -210,6 +211,12 @@ def main() :
 
       #Now plot the results.
       plotMandelbrot(MSet, numIterations, xyLocations, outfile)
+
+      #I think I am having memory issues.  I will delete the MSet variable and then garbage
+      #collect to free up memory.
+      del MSet
+      gc.collect()
+
     #End of for loop - for j in range(len(YCoords)) :
   #End of for loop - for i in range(len(XCoords)) :
   
